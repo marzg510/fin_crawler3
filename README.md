@@ -17,7 +17,8 @@ sudo apt-get update && sudo apt-get install google-cloud-sdk
 
 ## How to execute selenium
 
-- <https://qiita.com/kazumatsukazu/items/5b7141c85fd85c7d1c0d>
+- ローカルでのスクレイピング作業をGCPに持っていく作戦(その１)
+  - <https://qiita.com/kazumatsukazu/items/5b7141c85fd85c7d1c0d>
 
 ```bash
 git clone https://github.com/ryfeus/gcf-packs.git
@@ -26,9 +27,6 @@ unzip headless-chromium.zip
 #gcloud functions deploy handler --runtime python37 --trigger-http --region asia-northeast1 --memory 512MB
 gcloud functions deploy gcf_test --entry-point=handler --runtime python37 --trigger-http --region asia-northeast1 --memory 512MB
 ```
-
-- ローカルでのスクレイピング作業をGCPに持っていく作戦(その１)
-  - https://qiita.com/kazumatsukazu/items/5b7141c85fd85c7d1c0d
 
 ## Prepare
 
