@@ -27,6 +27,9 @@ unzip headless-chromium.zip
 gcloud functions deploy gcf_test --entry-point=handler --runtime python37 --trigger-http --region asia-northeast1 --memory 512MB
 ```
 
+- ローカルでのスクレイピング作業をGCPに持っていく作戦(その１)
+  - https://qiita.com/kazumatsukazu/items/5b7141c85fd85c7d1c0d
+
 ## Prepare
 
 1. install chromedriver
