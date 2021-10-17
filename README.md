@@ -3,6 +3,40 @@
 
 financial crawlers on GCF
 
+## Setup GCF
+
+1. create project
+2. setup GCF
+- gcloud functions deploy ... コマンドでAPI承認するか聞いてくるのでYESを選択する
+- gcloud functions deploy ... コマンドでデプロイに失敗する場合は数分待ってリトライする
+
+- OAuth同意画面の設定 -> 不要
+
+- APIを検索して有効にする
+  - APIとサービスの有効化
+    - Cloud Functions API
+    - Cloud Build API 
+    - Google Drive API
+ - Cloud Build APIは
+  - 認証情報の設定が必要
+    - アプリケーションデータを選択
+    - はい、使用しています
+    - 次へ
+    - 完了
+  - Google Drive API
+    - 認証情報の作成
+
+3. Test , Exec
+  - リソース　→ Cloud Functions API
+    - 縦三点リーダー︙から「関数をテスト」
+### reference
+- <https://blowup-bbs.com/gcp-cloud-functions-python3/>
+
+
+### 関数のありか
+
+- main.pyに書かないとダメみたい。
+
 ## Install Google Cloud SDK
 
 ```bash
@@ -14,6 +48,17 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyr
 # Update the package list and install the Cloud SDK
 sudo apt-get update && sudo apt-get install google-cloud-sdk
 ```
+
+## Deploy
+
+gcloud functions deploy handler --entry-point=handler --runtime python37 --trigger-http --region asia-northeast1 --memory 512MB
+gcloud functions deploy handler2 --entry-point=handler --runtime python37 --trigger-http --region asia-northeast1 --memory 512MB
+
+
+## Google Drive API
+
+- https://zenn.dev/wtkn25/articles/python-googledriveapi-auth
+- https://zenn.dev/wtkn25/articles/python-googledriveapi-operation
 
 ## How to execute selenium
 
