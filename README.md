@@ -6,6 +6,17 @@ financial crawlers on GCF
 ## design
 
 https://drive.google.com/file/d/18qINyrg97spgQj_Bzdnn2Ew443PUTm2b/view?usp=sharing
+
+## 
+```
+pip install fake-useragent
+```
+
+
+## 確認くん
+
+  - https://www.ugtop.com/spill.shtml
+
 ## Setup GCF
 
 1. create project

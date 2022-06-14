@@ -5,6 +5,7 @@ from rakuten_crawler import RakutenCrawler
 def rakuten_crawler(request):
     line = "Hello,rakuten_crawler!"
     print(line)
+    print
     RakutenCrawler().crawl(request)
     return line
 
