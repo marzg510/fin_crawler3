@@ -116,9 +116,10 @@ python aeon_crawler.py YOUR-USER-ID YOUR-PASSWORD [--outdir <dir>]
 
 # Password Encrypt Hint(for Linux)
 ## prepare(generate key pair)
-``
+```
 ssh-keygen -t rsa -b 4096 -m PEM
 ```
+
 ```
 ssh-keygen -t rsa
 ssh-keygen -e -m PEM -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pem
