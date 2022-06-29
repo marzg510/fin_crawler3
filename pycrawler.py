@@ -33,11 +33,10 @@ class PyCrawler:
         win_size = driver.get_window_size()
         driver.set_window_size(win_size['width']+200,win_size['height']+400)
         self.driver = driver
-    
+
     def __del__(self):
         if self.driver is not None:
             self.driver.quit()
-    
 
     def screenshot(self, seq=None, name='ss'):
         '''

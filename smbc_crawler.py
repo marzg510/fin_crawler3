@@ -1,11 +1,13 @@
 # coding: utf-8
+"""
+SMBC Crawler
+"""
 
 import logging
 import logging.handlers
 import sys
 import os
 from argparse import ArgumentParser
-import selenium_helper as helper
 import time
 import selenium.common.exceptions
 from selenium.webdriver.common.by import By
@@ -15,16 +17,21 @@ def get_logger(name):
     """
     ログ設定
     """
-    l = logging.getLogger(name)
-    l.setLevel(logging.DEBUG)
-    h = logging.StreamHandler(sys.stdout)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(sys.stdout)
     # h = logging.handlers.TimedRotatingFileHandler('{}/{}.log'.format(LOGDIR, ap_name), 'D', 2, 13)
-    h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
-    l.addHandler(h)
-    return l
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
+    logger.addHandler(handler)
+    return logger
 
 def get_arg_parser():
-    usage = 'Usage: python {} USER_ID1 USER_ID2 PASSWORD ACCOUNT_NO [--outdir <dir>] [--url <url>] [--help]'.format(os.path.basename(__file__))
+    """
+    引数解析機の取得
+    """
+    usage = 'Usage: python %s '\
+            'USER_ID1 USER_ID2 PASSWORD ACCOUNT_NO [--outdir <dir>] [--url <url>] [--help]'\
+             % os.path.basename(__file__)
     parser = ArgumentParser(usage=usage)
     parser.add_argument('user1', type=str, help='USER ID 1')
     parser.add_argument('user2', type=str, help='USER ID 2')
@@ -52,8 +59,10 @@ class SmbcCrawler(PyCrawler):
         if out_dir is not None:
             self.out_dir = out_dir
         super().__init__(out_dir)
-        self.outfile = os.path.join(self.out_dir, 'smbc_{}_{}.csv'.format(account, time.strftime('%Y%m%d', time.localtime())))
-
+        self.outfile = os.path.join(
+                            self.out_dir,
+                            'smbc_%s_%s.csv' % (account, time.strftime('%Y%m%d', time.localtime()))
+                        )
 
     def crawl(self):
         """
@@ -98,7 +107,8 @@ class SmbcCrawler(PyCrawler):
         self.screenshot(name='after-login')
         # ############ login check
         log.info("checking login...")
-        e_errs = driver.find_elements(By.XPATH, "//dt[@class='title' and contains(text(),'エラーコード')]")
+        e_errs = driver.find_elements(By.XPATH,
+                                    "//dt[@class='title' and contains(text(),'エラーコード')]")
         if len(e_errs) > 0:
             log.error("login failure")
             for err in e_errs:
@@ -114,48 +124,53 @@ class SmbcCrawler(PyCrawler):
         self.screenshot(name='smbc-top-after-confirm')
         # ############ Navigate to Detail page
         log.info("Navigate to Detail page...")
-        e_link = driver.find_element(By.XPATH, "//a[contains(@onclick,'{}')]".format(account))
-        log.debug('link for detail : tag={} href={} visible={}'.format(e_link.tag_name, e_link.get_attribute('href'), e_link.is_displayed()))
+        e_link = driver.find_element(By.XPATH, "//a[contains(@onclick,'{}')]".format(self.account))
+        log.debug('link for detail : tag=%s href=%s visible=%s'
+                    ,e_link.tag_name, e_link.get_attribute('href'), e_link.is_displayed())
         e_link.click()
         time.sleep(1)
         self.screenshot(name='detail')
         # ############ 過去の明細を照会
         e_button = driver.find_element(By.XPATH, "//button[span[contains(text(),'過去の明細を照会')]]")
-        log.debug('link for past datail : tag={} href={} visible={}'.format(e_button.tag_name, e_button.get_attribute('href'),e_button.is_displayed()))
+        log.debug('button for past datail : tag=%s visible=%s'
+                    , e_button.tag_name, e_button.is_displayed())
         e_button.click()
         time.sleep(3)
         self.screenshot(name='past_detail_dialog')
         # ############ 照会
 #        e_button = driver.find_element(By.XPATH, "//button[span[text()='照会']]")
         e_button = driver.find_element(By.XPATH, "//button[@data-mode='照会']")
-        log.debug('button for show : tag={} href={} visible={}'.format(e_button.tag_name, e_button.get_attribute('href'),e_button.is_displayed()))
+        log.debug('button for show : tag=%s visible=%s', e_button.tag_name, e_button.is_displayed())
         e_button.click()
         time.sleep(3)
         self.screenshot(name='past_detail')
         # ############ 並べ替え
         e_button = driver.find_element(By.XPATH, "//button[@aria-label='並替']")
-        log.debug('button for sort : tag={} href={} visible={}'.format(e_button.tag_name, e_button.get_attribute('href'),e_button.is_displayed()))
+        log.debug('button for sort : tag=%s visible=%s', e_button.tag_name, e_button.is_displayed())
         e_button.click()
         self.screenshot(name='sort')
         # ############ 明細が古い順
-        e_button = driver.find_element(By.XPATH, "//li[label[input[@type='radio' and @name='accountSort' and @value='desc']]]")
-        log.debug('button for sort desc : tag={} href={} visible={}'.format(e_button.tag_name, e_button.get_attribute('href'),e_button.is_displayed()))
+        e_button = driver.find_element(By.XPATH
+                    , "//li[label[input[@type='radio' and @name='accountSort' and @value='desc']]]")
+        log.debug('button for sort desc : tag=%s visible=%s'
+                    , e_button.tag_name, e_button.is_displayed())
         e_button.click()
         self.screenshot(name='sorted_descention')
         # ############ Download CSV file
         log.info("Downloading")
         e_csv = driver.find_element(By.XPATH, "//a[contains(.,'明細をCSVダウンロード')]")
-        log.debug('link for csv : tag={} href={} visible={}'.format(e_csv.tag_name, e_csv.get_attribute('href'),e_csv.is_displayed()))
+        log.debug('link for csv : tag=%s href=%s visible=%s'
+                     , e_csv.tag_name, e_csv.get_attribute('href'),e_csv.is_displayed())
         e_csv.click()
         log.info("finish file writing to %s", self.out_dir)
         self.screenshot(name='after-csv-downloaded')
         # rename
         time.sleep(10)
-        os.rename(os.path.join(outdir, 'meisai.csv'), self.outfile)
+        os.rename(os.path.join(self.out_dir, 'meisai.csv'), self.outfile)
         log.info("rename file to {}".format(self.outfile))
 
-
-if __name__ == '__main__':
+def main():
+    """ main """
     ap_name = os.path.splitext(os.path.basename(__file__))[0]
     log = get_logger(ap_name)
     log.info("start")
@@ -166,18 +181,20 @@ if __name__ == '__main__':
     passwd = args.passwd
     account = args.account
     outdir = args.outdir
-    main = SmbcCrawler(user1, user2, passwd, account, outdir, log)
-    main.is_save_html_with_ss = True
-    main.screenshot_dir = "./log/ss_smbc"
-    main.driver.set_page_load_timeout(60)
+    crawler = SmbcCrawler(user1, user2, passwd, account, outdir, log)
+    crawler.is_save_html_with_ss = True
+    crawler.screenshot_dir = "./log/ss_smbc"
+    crawler.driver.set_page_load_timeout(60)
     try:
-        main.crawl()
-    except Exception as e:
+        crawler.crawl()
+    except Exception as ex:
         log.exception('exception occurred.')
-        print(e, file=sys.stderr)
+        print(ex, file=sys.stderr)
     finally:
-        del main
+        del crawler
 
     log.info("end")
 
-exit()
+if __name__ == '__main__':
+    main()
+    exit()
