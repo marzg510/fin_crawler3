@@ -19,8 +19,8 @@ def get_logger(name):
     """
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    # h = logging.handlers.TimedRotatingFileHandler('{}/{}.log'.format(LOGDIR, ap_name), 'D', 2, 13)
+#    handler = logging.StreamHandler(sys.stdout)
+    handler = logging.handlers.TimedRotatingFileHandler('%s/%s.log' % ("./log", name), 'D', 2, 13)
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
     logger.addHandler(handler)
     return logger
