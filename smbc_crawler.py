@@ -138,7 +138,6 @@ class SmbcCrawler(PyCrawler):
         time.sleep(3)
         self.screenshot(name='past_detail_dialog')
         # ############ 照会
-#        e_button = driver.find_element(By.XPATH, "//button[span[text()='照会']]")
         e_button = driver.find_element(By.XPATH, "//button[@data-mode='照会']")
         log.debug('button for show : tag=%s visible=%s', e_button.tag_name, e_button.is_displayed())
         e_button.click()
