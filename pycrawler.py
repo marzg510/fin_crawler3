@@ -12,7 +12,7 @@ from fake_useragent import UserAgent
 
 class PyCrawler:
     """This is a Common Crawler class."""
-    DEFAULT_OUT_DIR = "."
+    DEFAULT_OUT_DIR = "./out"
     screenshot_dir = "."
     out_dir = DEFAULT_OUT_DIR
     log_dir = "./log"

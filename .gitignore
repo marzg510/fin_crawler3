@@ -139,3 +139,5 @@ gcf_test/*
 *.png
 *.html
 *.log.*
+*_未確定.txt
+crawler-*-*json
