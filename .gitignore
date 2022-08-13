@@ -138,3 +138,4 @@ gcf_test/*
 
 *.png
 *.html
+*.log.*

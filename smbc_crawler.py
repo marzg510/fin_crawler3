@@ -13,6 +13,7 @@ import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from pycrawler import PyCrawler
 
+
 def get_logger(name):
     """
     ログ設定
@@ -25,13 +26,14 @@ def get_logger(name):
     logger.addHandler(handler)
     return logger
 
+
 def get_arg_parser():
     """
     引数解析機の取得
     """
     usage = 'Usage: python %s '\
             'USER_ID1 USER_ID2 PASSWORD ACCOUNT_NO [--outdir <dir>] [--url <url>] [--help]'\
-             % os.path.basename(__file__)
+            % os.path.basename(__file__)
     parser = ArgumentParser(usage=usage)
     parser.add_argument('user1', type=str, help='USER ID 1')
     parser.add_argument('user2', type=str, help='USER ID 2')
@@ -39,6 +41,7 @@ def get_arg_parser():
     parser.add_argument('account', type=str, help='ACCOUNT_NO')
     parser.add_argument('-o', '--outdir', type=str, help='file output directory', default="out/")
     return parser
+
 
 class SmbcCrawler(PyCrawler):
     """
@@ -60,9 +63,9 @@ class SmbcCrawler(PyCrawler):
             self.out_dir = out_dir
         super().__init__(out_dir)
         self.outfile = os.path.join(
-                            self.out_dir,
-                            'smbc_%s_%s.csv' % (account, time.strftime('%Y%m%d', time.localtime()))
-                        )
+            self.out_dir,
+            'smbc_%s_%s.csv' % (account, time.strftime('%Y%m%d', time.localtime()))
+        )
 
     def crawl(self):
         """
@@ -70,10 +73,10 @@ class SmbcCrawler(PyCrawler):
         """
         log = self.log
         driver = self.driver
-        log.info("user_id=%s %s",self.user1, self.user2)
-        log.info("account=%s",self.account)
-        log.info("outdir=%s",self.out_dir)
-        log.info("outfile=%s" % self.outfile)
+        log.info("user_id=%s %s", self.user1, self.user2)
+        log.info("account=%s", self.account)
+        log.info("outdir=%s", self.out_dir)
+        log.info("outfile=%s", self.outfile)
         log.info("screenshot_dir=%s", self.screenshot_dir)
         # ############# ログイン画面
         log.info("getting SMBC login page")
@@ -107,8 +110,9 @@ class SmbcCrawler(PyCrawler):
         self.screenshot(name='after-login')
         # ############ login check
         log.info("checking login...")
-        e_errs = driver.find_elements(By.XPATH,
-                                    "//dt[@class='title' and contains(text(),'エラーコード')]")
+        e_errs = driver.find_elements(
+            By.XPATH, "//dt[@class='title' and contains(text(),'エラーコード')]"
+        )
         if len(e_errs) > 0:
             log.error("login failure")
             for err in e_errs:
@@ -125,15 +129,15 @@ class SmbcCrawler(PyCrawler):
         # ############ Navigate to Detail page
         log.info("Navigate to Detail page...")
         e_link = driver.find_element(By.XPATH, "//a[contains(@onclick,'{}')]".format(self.account))
-        log.debug('link for detail : tag=%s href=%s visible=%s'
-                    ,e_link.tag_name, e_link.get_attribute('href'), e_link.is_displayed())
+        log.debug('link for detail : tag=%s href=%s visible=%s',
+                  e_link.tag_name, e_link.get_attribute('href'), e_link.is_displayed())
         e_link.click()
         time.sleep(1)
         self.screenshot(name='detail')
         # ############ 過去の明細を照会
         e_button = driver.find_element(By.XPATH, "//button[span[contains(text(),'過去の明細を照会')]]")
-        log.debug('button for past datail : tag=%s visible=%s'
-                    , e_button.tag_name, e_button.is_displayed())
+        log.debug('button for past datail : tag=%s visible=%s',
+                  e_button.tag_name, e_button.is_displayed())
         e_button.click()
         time.sleep(3)
         self.screenshot(name='past_detail_dialog')
@@ -149,17 +153,19 @@ class SmbcCrawler(PyCrawler):
         e_button.click()
         self.screenshot(name='sort')
         # ############ 明細が古い順
-        e_button = driver.find_element(By.XPATH
-                    , "//li[label[input[@type='radio' and @name='accountSort' and @value='desc']]]")
-        log.debug('button for sort desc : tag=%s visible=%s'
-                    , e_button.tag_name, e_button.is_displayed())
+        e_button = driver.find_element(
+            By.XPATH,
+            "//li[label[input[@type='radio' and @name='accountSort' and @value='desc']]]"
+        )
+        log.debug('button for sort desc : tag=%s visible=%s',
+                  e_button.tag_name, e_button.is_displayed())
         e_button.click()
         self.screenshot(name='sorted_descention')
         # ############ Download CSV file
         log.info("Downloading")
         e_csv = driver.find_element(By.XPATH, "//a[contains(.,'明細をCSVダウンロード')]")
-        log.debug('link for csv : tag=%s href=%s visible=%s'
-                     , e_csv.tag_name, e_csv.get_attribute('href'),e_csv.is_displayed())
+        log.debug('link for csv : tag=%s href=%s visible=%s',
+                  e_csv.tag_name, e_csv.get_attribute('href'), e_csv.is_displayed())
         e_csv.click()
         log.info("finish file writing to %s", self.out_dir)
         self.screenshot(name='after-csv-downloaded')
@@ -167,6 +173,7 @@ class SmbcCrawler(PyCrawler):
         time.sleep(10)
         os.rename(os.path.join(self.out_dir, 'meisai.csv'), self.outfile)
         log.info("rename file to {}".format(self.outfile))
+
 
 def main():
     """ main """
@@ -193,6 +200,7 @@ def main():
         del crawler
 
     log.info("end")
+
 
 if __name__ == '__main__':
     main()
