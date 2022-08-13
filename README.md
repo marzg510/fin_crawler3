@@ -117,23 +117,18 @@ python aeon_crawler.py YOUR-USER-ID YOUR-PASSWORD [--outdir <dir>]
 # Password Encrypt Hint(for Linux)
 ## prepare(generate key pair)
 ```
-ssh-keygen -t rsa -b 4096 -m PEM
-```
-
-```
-ssh-keygen -t rsa
-ssh-keygen -e -m PEM -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pem
-ssh-keygen -e -m PKCS8 -f ~/.ssh/id_rsa.pub  > ~/.ssh/id_rsa.pub.pem
+openssl genrsa -out key.pri 2048
+openssl rsa -in key.pri -pubout -out key.pub
 ```
 
 ## generate encrypted password file
 ```
-echo "yourpassword" | openssl rsautl -encrypt -pubin -inkey ~/.ssh/id_rsa.pub.pem -out secretfile
+echo "yourpassword" | openssl pkeyutl -encrypt -pubin -inkey ~/.ssh/key.pub -out secretfile
 ```
 
 ## use password file
 ```
-echo `openssl rsautl -decrypt -inkey ~/.ssh/id_rsa -in secretfile`
+openssl pkeyutl -decrypt -inkey ~/.ssh/key.pri -in secretfile
 ```
 
 ## see also
